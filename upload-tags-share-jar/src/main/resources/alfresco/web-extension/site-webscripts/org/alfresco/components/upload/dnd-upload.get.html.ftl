@@ -1,6 +1,6 @@
 <@markup id="css" >
 <#-- CSS Dependencies -->
-    <@link href="${url.context}/res/components/upload/dnd-upload.css" group="upload"/>
+    <@link href="${url.context}/res/components/upload/dnd-upload-custom.css" group="upload"/>
 </@>
 
 <@markup id="js" >
@@ -26,8 +26,12 @@
           <div class="bd">
               <div id="${el}-file-selection-controls" class="browse-wrapper">
                   <div class="center dnd-file-selection-control">
-                      <textarea id="${el}-tags"></textarea>
-                      <input id="${el}-file-selection-button-overlay" type="button" value="${msg("button.selectFiles")}" tabindex="0"/>
+                    <div>
+                        <input id="${el}-file-selection-button-overlay" type="button" value="${msg("button.selectFiles")}" tabindex="0"/>
+                    </div>
+                    <div class="dnd-file-tags">
+                      <span>Tags: </span><input id="${el}-tags" name="tags" />
+                    </div>
                   </div>
               </div>
 

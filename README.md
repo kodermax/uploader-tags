@@ -1,5 +1,5 @@
 # Alfresco AIO Project - SDK 3
-
+test hi
 This is an All-In-One (AIO) project for Alfresco SDK 3.0. 
 
 Run with `mvn clean install -DskipTests=true alfresco:run` or `./run.sh` and verify that it 
