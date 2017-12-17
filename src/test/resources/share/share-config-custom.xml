@@ -17,7 +17,7 @@
 
                  For more information see the Aikau source code: https://github.com/Alfresco/Aikau
             -->
-            <disable-resource-caching>false</disable-resource-caching>
+            <disable-resource-caching>true</disable-resource-caching>
         </web-framework>
     </config>
 

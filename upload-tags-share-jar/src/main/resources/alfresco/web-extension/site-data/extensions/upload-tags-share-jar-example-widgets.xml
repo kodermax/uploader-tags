@@ -10,6 +10,7 @@
             <dojo-pages>
               <packages>
                 <package name="tutorials" location="resources/upload-tags-share-jar/js/tutorials"/>
+                <package name="upload" location="components/upload"/>
               </packages>
             </dojo-pages>
           </web-framework>

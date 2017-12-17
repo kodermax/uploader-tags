@@ -16,38 +16,10 @@
         (will be merged with out-of-the-box configured types and aspects)
     =============================================================================================================-->
 
-    <config evaluator="aspect" condition="up:UploadFolder">
-        <forms>
-            <form>
-                <field-visibility>
-                    <show id="up:allowedTypes"/>
-                </field-visibility>
-            </form>
-            <form id="upload-folder">
-                <field-visibility>
-                    <show id="up:allowedTypes"/>
-                </field-visibility>
-                <edit-form
-                        template="../documentlibrary/forms/doclib-simple-metadata.ftl"/>
-                <appearance>
-                    <field id="up:allowedTypes">
-                        <control
-                                template="/com/inbyte/uploader-tags/controls/selecttypes.ftl">
-                            <control-param name="styleClass">
-                                supported-types-select
-                            </control-param>
-                        </control>
-                    </field>
-                </appearance>
-            </form>
-        </forms>
-    </config>
-
     <config evaluator="string-compare" condition="DocumentLibrary">
         <aspects>
             <visible>
                 <aspect name="acme:securityClassified"/>
-                <aspect name="up:UploadFolder"/>
             </visible>
             <addable> <!-- defaults to visible config -->
             </addable>
@@ -342,14 +314,6 @@
                             <control-param name="forceEditor">true</control-param>
                         </control>
                     </field>
-
-                    <!-- ACME Props appearance -->
-                    <set id="acmeDocSet" appearance="bordered-panel" label-id="form.set.label.acme.document"/>
-                    <field id="acme:documentId" label-id="form.field.label.acme.documentId" set="acmeDocSet">
-                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-                    </field>
-                    <field id="acme:securityClassification" label-id="form.field.label.acme.securityClassification"
-                           set="acmeDocSet"/>
                 </appearance>
             </form>
         </forms>

@@ -412,6 +412,5 @@
   <modules>
     <module>upload-tags-platform-jar</module>
     <module>upload-tags-share-jar</module>
-    <module>integration-tests</module>
   </modules>
 </project>

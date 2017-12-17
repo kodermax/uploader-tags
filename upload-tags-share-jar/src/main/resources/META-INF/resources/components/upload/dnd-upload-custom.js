@@ -749,7 +749,7 @@
                         {
                             this.fileSelectionInput.parentNode.removeChild(this.fileSelectionInput); // Remove the old node...
                         }
-
+                        
                         this.fileSelectionInput = document.createElement("input");
                         Dom.setAttribute(this.fileSelectionInput, "type", "file");
 
@@ -1261,6 +1261,7 @@
                 Dom.setStyle(this.id + "-aggregate-progress-span", "left", "-620px");
                 Dom.removeClass(this.aggregateDataWrapper, "hidden");
                 Dom.get(this.id + "-tags").value = '';
+                // alert('reset tags');
             },
 
             /**
@@ -1411,12 +1412,14 @@
                                                     var redirect = this.getResponseHeader["Location"];
                                                     if (redirect)
                                                     {
-                                                        window.location.href = window.location.protocol + "//" + window.location.host + redirect;
+                                                        alert('href');
+                                                       // window.location.href = window.location.protocol + "//" + window.location.host + redirect;
                                                         return;
                                                     }
                                                     else
                                                     {
-                                                        window.location.reload(true);
+                                                        alert('redirect');
+                                                       // window.location.reload(true);
                                                         return;
                                                     }
                                                 }
@@ -1439,12 +1442,12 @@
                                 var redirect = this.getResponseHeader["Location"];
                                 if (redirect)
                                 {
-                                    window.location.href = window.location.protocol + "//" + window.location.host + redirect;
+                                   // window.location.href = window.location.protocol + "//" + window.location.host + redirect;
                                     return;
                                 }
                                 else
                                 {
-                                    window.location.reload(true);
+                                  //  window.location.reload(true);
                                     return;
                                 }
                             }
@@ -2005,7 +2008,7 @@
                     if (callback && typeof callback.fn == "function")
                     {
                         // Call the onFileUploadComplete callback in the correct scope
-                        callback.fn.call((typeof callback.scope == "object" ? callback.scope : this), objComplete, callback.obj);
+                   //     callback.fn.call((typeof callback.scope == "object" ? callback.scope : this), objComplete, callback.obj);
                     }
 
                     if (objComplete.failed.length === 0)
