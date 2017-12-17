@@ -668,7 +668,6 @@
              */
             show: function DNDUpload_show(config)
             {
-                alert('show');
                 // Create an alias for this (it is required for the listener functions declared later)
                 var _this = this;
 
@@ -1262,7 +1261,6 @@
                 Dom.setStyle(this.id + "-aggregate-progress-span", "left", "-620px");
                 Dom.removeClass(this.aggregateDataWrapper, "hidden");
                 Dom.get(this.id + "-tags").value = '';
-                alert('reset gui');
             },
 
             /**
