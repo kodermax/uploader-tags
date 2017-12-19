@@ -1399,7 +1399,7 @@
                 if (!tags) {
                     return;
                 } else {
-                    Alfresco.util.Ajax.jsonRequest(
+                   Alfresco.util.Ajax.jsonRequest(
                         {
                             method: "POST",
                             url: Alfresco.constants.PROXY_URI + "api/tag/workspace/SpacesStore",
@@ -1479,38 +1479,39 @@
                     }
                     // CUSTOMIZE
                     // Create Tags
-                    var promise = this.saveTags();
+                    this.saveTags();
+                    var that = this
                     setTimeout(function () {
                         if (!this.showConfig.suppressRefreshEvent) {
                             if (fileName) {
                                 YAHOO.Bubbling.fire("metadataRefresh",
                                     {
-                                        currentPath: this.showConfig.path,
+                                        currentPath: that.showConfig.path,
                                         highlightFile: fileName
                                     });
                             }
                             else {
                                 YAHOO.Bubbling.fire("metadataRefresh",
                                     {
-                                        currentPath: this.showConfig.path
+                                        currentPath: that.showConfig.path
                                     });
                             }
 
                             // potentially new folders created under parent
                             YAHOO.Bubbling.fire("folderCreated",
                                 {
-                                    parentNodeRef: this.showConfig.parentNodeRef
+                                    parentNodeRef: that.showConfig.parentNodeRef
                                 });
                         }
 
                         // Remove all files and references for this upload "session"
-                        this._clear();
+                        that._clear();
 
                         // Hide the panel
-                        this.panel.hide();
+                        that.panel.hide();
 
                         // Disable the Esc key listener
-                        this.widgets.escapeListener.disable();
+                        that.widgets.escapeListener.disable();
 
                         // Inform the user if any files were uploaded before the rest was cancelled
                         if (message) {
