@@ -29,9 +29,6 @@
                     <div>
                         <input id="${el}-file-selection-button-overlay" type="button" value="${msg("button.selectFiles")}" tabindex="0"/>
                     </div>
-                    <div class="dnd-file-tags">
-                      <span>Tags: </span><input id="${el}-tags" name="tags" />
-                    </div>
                   </div>
               </div>
 
@@ -39,6 +36,9 @@
 
               <div class="status-wrapper">
                   <span id="${el}-status-span" class="status"></span>
+                  <div class="dnd-file-tags">
+                      <span>Tags: </span><input id="${el}-tags" name="tags" />
+                  </div>
               </div>
               <div id="${el}-aggregate-data-wrapper">
                   <div class="status-wrapper">

@@ -42,8 +42,7 @@
  * @class Alfresco.DNDUpload
  * @extends Alfresco.component.Base
  */
-(function()
-{
+(function () {
     /**
      * YUI Library aliases
      */
@@ -68,8 +67,7 @@
      * @constructor
      * @private
      */
-    Alfresco.DNDUpload = function(htmlId)
-    {
+    Alfresco.DNDUpload = function (htmlId) {
         Alfresco.DNDUpload.superclass.constructor.call(this, "Alfresco.DNDUpload", htmlId, ["button", "container", "datatable", "datasource"]);
 
         this.fileStore = {};
@@ -104,12 +102,10 @@
         // loaded into memory) otherwise the file will need to be loaded into the browser memory before
         // it can be uploaded to the server. This state can be queried by callers to the instance
         // using the "uploadMethod" attribute.
-        if (typeof FormData !== "undefined")
-        {
+        if (typeof FormData !== "undefined") {
             this.uploadMethod = this.FORMDATA_UPLOAD;
         }
-        else
-        {
+        else {
             this.uploadMethod = this.INMEMORY_UPLOAD;
         }
 
@@ -443,8 +439,7 @@
              * @method setMaximumFileSizeLimit
              * @param maximumFileSizeLimit
              */
-            setMaximumFileSizeLimit: function DNDUpload_setMaximumFileSizeLimit(maximumFileSizeLimit)
-            {
+            setMaximumFileSizeLimit: function DNDUpload_setMaximumFileSizeLimit(maximumFileSizeLimit) {
                 this._maximumFileSizeLimit = maximumFileSizeLimit;
             },
 
@@ -453,8 +448,7 @@
              *
              * @method getMaximumFileSizeLimit
              */
-            getMaximumFileSizeLimit: function DNDUpload_getInMemoryLimit()
-            {
+            getMaximumFileSizeLimit: function DNDUpload_getInMemoryLimit() {
                 return this._maximumFileSizeLimit;
             },
 
@@ -475,17 +469,14 @@
              * @method setInMemoryLimit
              * @param limit
              */
-            setInMemoryLimit: function DNDUpload_setInMemoryLimit(limit)
-            {
-                if (isNaN(limit))
-                {
+            setInMemoryLimit: function DNDUpload_setInMemoryLimit(limit) {
+                if (isNaN(limit)) {
                     // If the user has overridden the default value and provided a non-numerical value
                     // then we'll just leave the limit as the default.
                     Alfresco.logger.warn("Non-numerical value set for \"in-memory-limit\" in share-documentlibrary.xml: ", limit);
                     this._inMemoryLimit = 25000000;
                 }
-                else
-                {
+                else {
                     this._inMemoryLimit = limit;
                 }
             },
@@ -497,8 +488,7 @@
              * @method setInMemoryLimit
              * @param limit
              */
-            getInMemoryLimit: function DNDUpload_getInMemoryLimit()
-            {
+            getInMemoryLimit: function DNDUpload_getInMemoryLimit() {
                 return this._inMemoryLimit;
             },
 
@@ -508,8 +498,7 @@
              *
              * @method onReady
              */
-            onReady: function DNDUpload_onReady()
-            {
+            onReady: function DNDUpload_onReady() {
                 Dom.removeClass(this.id + "-dialog", "hidden");
 
                 // Create the panel
@@ -564,8 +553,7 @@
              * @method _doNothing
              * @param event {object} a file selection "change" event
              */
-            _doNothing: function DNDUpload_doNothing()
-            {
+            _doNothing: function DNDUpload_doNothing() {
                 // Do nothing
             },
 
@@ -575,41 +563,33 @@
              * @method onBrowseButtonClick
              * @param event {object} a file selection "change" event
              */
-            onFileSelection: function DNDUpload_onFileSelection(evt)
-            {
+            onFileSelection: function DNDUpload_onFileSelection(evt) {
                 var files = evt.target.files; // FileList object
-                if (files != null)
-                {
+                if (files != null) {
                     this.showConfig.files = files;
 
                     // This is done even if no files are selected to ensure the display is correct if the next upload is via drag and drop...
-                    if (this.dataTable != null)
-                    {
+                    if (this.dataTable != null) {
                         // Check the data table has been set up (it might not be if this is the first invocation)...
                         this.dataTable.set("height", "204px", true);
                     }
 
                     // Do some checks to ensure that we can proceed with some kind of upload
                     var allZeroByteFiles = true;
-                    for (var i=0; i<files.length; i++)
-                    {
-                        if (files[i].size !== 0)
-                        {
+                    for (var i = 0; i < files.length; i++) {
+                        if (files[i].size !== 0) {
                             allZeroByteFiles = false;
                             break;
                         }
                     }
 
-                    if (allZeroByteFiles)
-                    {
+                    if (allZeroByteFiles) {
                         // All the files selected are zero bytes in length - process the files anyway as this will
                         // properly validate for errors but we won't change the appearance of the file selection.
                         this.processFilesForUpload(this.showConfig.files);
                     }
-                    else
-                    {
-                        if (this.suppliedConfig.mode == this.MODE_SINGLE_UPDATE)
-                        {
+                    else {
+                        if (this.suppliedConfig.mode == this.MODE_SINGLE_UPDATE) {
                             // If we're doing an update then we don't want to start the upload immediately as this
                             // will not allow the user the opportunity to set the version update level or add a
                             // comment...
@@ -617,18 +597,15 @@
                             Dom.removeClass(this.widgets.uploadButton, "hidden");
 
                             var newUploadedFile = evt.target.files[0];
-                            if (this.showConfig.newVersion && this._isNewFileName(this.showConfig.jsNode, newUploadedFile))
-                            {
+                            if (this.showConfig.newVersion && this._isNewFileName(this.showConfig.jsNode, newUploadedFile)) {
                                 Dom.removeClass(this.compareVersionsSection, "hidden");
                                 this._updateCompareVersionsSection(this.showConfig.jsNode, newUploadedFile);
                             }
-                            else
-                            {
+                            else {
                                 Dom.addClass(this.compareVersionsSection, "hidden");
                             }
                         }
-                        else
-                        {
+                        else {
                             Dom.removeClass(this.id + "-filelist-table", "hidden");
                             Dom.removeClass(this.id + "-aggregate-data-wrapper", "hidden");
                             Dom.addClass(this.id + "-file-selection-controls", "hidden");
@@ -636,8 +613,7 @@
                         }
                     }
                 }
-                else
-                {
+                else {
                     // No files selected, do nothing.
                 }
             },
@@ -666,21 +642,18 @@
        *                             // an overwrite and a new version
        * }
              */
-            show: function DNDUpload_show(config)
-            {
+            show: function DNDUpload_show(config) {
                 // Create an alias for this (it is required for the listener functions declared later)
                 var _this = this;
 
                 // Merge the supplied config with default config and check mandatory properties
                 this.suppliedConfig = config;
                 this.showConfig = YAHOO.lang.merge(this.defaultShowConfig, config);
-                if (this.showConfig.uploadDirectory !== null && this.showConfig.uploadDirectory.length === 0)
-                {
+                if (this.showConfig.uploadDirectory !== null && this.showConfig.uploadDirectory.length === 0) {
                     this.showConfig.uploadDirectory = "/";
                 }
 
-                if (!this.showConfig.uploadDirectory && !this.showConfig.updateNodeRef && !this.showConfig.destination && !this.showConfig.uploadURL)
-                {
+                if (!this.showConfig.uploadDirectory && !this.showConfig.updateNodeRef && !this.showConfig.destination && !this.showConfig.uploadURL) {
                     throw new Error("An updateNodeRef, uploadDirectory, destination or uploadURL must be provided");
                 }
 
@@ -691,24 +664,20 @@
                 this._applyConfig();
 
                 // If files is not defined then assume we need to select them...
-                if (this.showConfig.files == null || this.showConfig.files.length == 0)
-                {
+                if (this.showConfig.files == null || this.showConfig.files.length == 0) {
                     // Display the file select section of the dialog
                     // Hide the file and progress information...
                     Dom.removeClass(this.id + "-file-selection-controls", "hidden");
                     Dom.addClass(this.id + "-filelist-table", "hidden");
                     Dom.addClass(this.aggregateDataWrapper, "hidden");
 
-                    if (YAHOO.env.ua.ie > 9)
-                    {
+                    if (YAHOO.env.ua.ie > 9) {
                         // Create a new file selection input element (to ensure old data is retained we will remove any old instance...
-                        if (this.fileSelectionInput && this.fileSelectionInput.parentNode)
-                        {
+                        if (this.fileSelectionInput && this.fileSelectionInput.parentNode) {
                             this.fileSelectionInputParent = this.fileSelectionInput.parentNode;
                             this.fileSelectionInput.parentNode.removeChild(this.fileSelectionInput); // Remove the old node...
                         }
-                        else
-                        {
+                        else {
                             this.fileSelectionInputParent = this.widgets.fileSelectionOverlayButton._button.parentNode;
                             this.fileSelectionInputParent.removeChild(this.widgets.fileSelectionOverlayButton._button);
                         }
@@ -718,8 +687,7 @@
 
                         // Only set the multiple attribute on the input element if running in multi-file upload
                         // (i.e. we don't want to allow multiple file selection when updating a file)
-                        if (this.suppliedConfig.mode !== this.MODE_SINGLE_UPLOAD && this.suppliedConfig.mode !== this.MODE_SINGLE_UPDATE)
-                        {
+                        if (this.suppliedConfig.mode !== this.MODE_SINGLE_UPLOAD && this.suppliedConfig.mode !== this.MODE_SINGLE_UPDATE) {
                             Dom.setAttribute(this.fileSelectionInput, "multiple", "");
                         }
                         Dom.setAttribute(this.fileSelectionInput, "name", "files[]");
@@ -732,8 +700,7 @@
                                 keys: KeyListener.KEY.ENTER
                             },
                             {
-                                fn: function enter_key_pressed(obj)
-                                {
+                                fn: function enter_key_pressed(obj) {
                                     this.fileSelectionInput.click();
                                 },
                                 scope: this,
@@ -742,21 +709,18 @@
 
                         this.fileSelectionInputParent.appendChild(this.fileSelectionInput);
                     }
-                    else
-                    {
+                    else {
                         // Create a new file selection input element (to ensure old data is retained we will remove any old instance...
-                        if (this.fileSelectionInput && this.fileSelectionInput.parentNode)
-                        {
+                        if (this.fileSelectionInput && this.fileSelectionInput.parentNode) {
                             this.fileSelectionInput.parentNode.removeChild(this.fileSelectionInput); // Remove the old node...
                         }
-                        
+
                         this.fileSelectionInput = document.createElement("input");
                         Dom.setAttribute(this.fileSelectionInput, "type", "file");
 
                         // Only set the multiple attribute on the input element if running in multi-file upload
                         // (i.e. we don't want to allow multiple file selection when updating a file)
-                        if (this.suppliedConfig.mode !== this.MODE_SINGLE_UPLOAD && this.suppliedConfig.mode !== this.MODE_SINGLE_UPDATE)
-                        {
+                        if (this.suppliedConfig.mode !== this.MODE_SINGLE_UPLOAD && this.suppliedConfig.mode !== this.MODE_SINGLE_UPDATE) {
                             Dom.setAttribute(this.fileSelectionInput, "multiple", "");
                         }
                         Dom.setAttribute(this.fileSelectionInput, "name", "files[]");
@@ -772,8 +736,7 @@
                             keys: KeyListener.KEY.ENTER
                         },
                         {
-                            fn: function enter_key_pressed(obj)
-                            {
+                            fn: function enter_key_pressed(obj) {
                                 this.fileSelectionInput.click();
                             },
                             scope: this,
@@ -783,8 +746,7 @@
                     this.panel.setFirstLastFocusable();
                     this.panel.show();
                 }
-                else
-                {
+                else {
                     Dom.removeClass(this.id + "-filelist-table", "hidden");
                     Dom.removeClass(this.aggregateDataWrapper, "hidden");
                     Dom.addClass(this.id + "-file-selection-controls", "hidden");
@@ -799,8 +761,7 @@
              * @param _files
              * @return {null|string} String describing the error (html escaped) or null if file is valid
              */
-            processFilesForUpload: function DNDUpload_processFilesForUpload(_files)
-            {
+            processFilesForUpload: function DNDUpload_processFilesForUpload(_files) {
                 // Start the upload...
                 // Calculate the total expected upload size ahead of upload start to ensure
                 // that a steady progress indication is presented...
@@ -808,21 +769,17 @@
                     message = null,
                     messages = null,
                     fileName;
-                for (var i=0; i<_files.length; i++)
-                {
+                for (var i = 0; i < _files.length; i++) {
                     aggregateSize += _files[i].size;
                     fileName = _files[i].name;
 
                     // Validate file and collect errors
                     message = this._getFileValidationErrors(_files[i]);
-                    if (message)
-                    {
-                        if (messages)
-                        {
+                    if (message) {
+                        if (messages) {
                             messages += '<br/>' + message;
                         }
-                        else
-                        {
+                        else {
                             messages = message;
                         }
                     }
@@ -836,8 +793,7 @@
                 this._spawnUploads();
 
                 // Display validation errors
-                if (messages)
-                {
+                if (messages) {
                     Alfresco.util.PopupManager.displayPrompt(
                         {
                             title: this.msg("header.error"),
@@ -854,16 +810,13 @@
              * @param file
              * @return {null|string} String describing the error (html escaped) or null if file is valid
              */
-            _getFileValidationErrors: function(file)
-            {
+            _getFileValidationErrors: function (file) {
                 // Check if the file has size...
                 var fileName = file.name;
-                if (this._maximumFileSizeLimit > 0 && file.size > this._maximumFileSizeLimit)
-                {
+                if (this._maximumFileSizeLimit > 0 && file.size > this._maximumFileSizeLimit) {
                     return this.msg("message.maxFileFileSizeExceeded", $html(fileName), Alfresco.util.formatFileSize(file.size), Alfresco.util.formatFileSize(this._maximumFileSizeLimit));
                 }
-                else if (!Alfresco.forms.validation.nodeName({ id: 'file', value: fileName }, null, null, null, true))
-                {
+                else if (!Alfresco.forms.validation.nodeName({id: 'file', value: fileName}, null, null, null, true)) {
                     return this.msg("message.illegalCharacters", $html(fileName));
                 }
 
@@ -884,46 +837,37 @@
              * @param max The count of files to upload (recursion stops when i is no longer less than max)
              * @param scope Should be set to the widget scope (i.e. this).
              */
-            _addFiles: function DNDUpload__addFiles(i, max, scope)
-            {
+            _addFiles: function DNDUpload__addFiles(i, max, scope) {
                 var uniqueFileToken;
-                if (i < max)
-                {
+                if (i < max) {
                     var file = scope.showConfig.files[i];
-                    if (!this._getFileValidationErrors(file))
-                    {
+                    if (!this._getFileValidationErrors(file)) {
                         var fileId = "file" + i;
-                        try
-                        {
+                        try {
                             /**
                              * UPLOAD PROGRESS LISTENER
                              */
-                            var progressListener = function DNDUpload_progressListener(e)
-                            {
+                            var progressListener = function DNDUpload_progressListener(e) {
                                 Alfresco.logger.debug("File upload progress update received", e);
-                                if (e.lengthComputable)
-                                {
-                                    try
-                                    {
+                                if (e.lengthComputable) {
+                                    try {
                                         var percentage = Math.round((e.loaded * 100) / e.total),
                                             fileInfo = scope.fileStore[fileId];
                                         fileInfo.progressPercentage.innerHTML = percentage + "%";
 
                                         // Set progress position
-                                        var left = (-400 + ((percentage/100) * 400));
+                                        var left = (-400 + ((percentage / 100) * 400));
                                         Dom.setStyle(fileInfo.progress, "left", left + "px");
                                         scope._updateAggregateProgress(fileInfo, e.loaded);
 
                                         // Save value of how much has been loaded for the next iteration
                                         fileInfo.lastProgress = e.loaded;
                                     }
-                                    catch(exception)
-                                    {
+                                    catch (exception) {
                                         Alfresco.logger.error("The following error occurred processing an upload progress event: ", exception);
                                     }
                                 }
-                                else
-                                {
+                                else {
                                     Alfresco.logger.debug("File upload progress not computable", e);
                                 }
                             };
@@ -931,38 +875,31 @@
                             /**
                              * UPLOAD COMPLETION LISTENER
                              */
-                            var successListener = function DNDUpload_successListener(e)
-                            {
-                                try
-                                {
+                            var successListener = function DNDUpload_successListener(e) {
+                                try {
                                     Alfresco.logger.debug("File upload completion notification received", e);
 
                                     // The individual file has been transfered completely
                                     // Now adjust the gui for the individual file row
                                     var fileInfo = scope.fileStore[fileId];
-                                    if (fileInfo.request.readyState != 4)
-                                    {
+                                    if (fileInfo.request.readyState != 4) {
                                         // There is an occasional timing issue where the upload completion event fires before
                                         // the readyState is correctly updated. This means that we can't check the upload actually
                                         // completed successfully, if this occurs then we'll attach a function to the onreadystatechange
                                         // extension point and things to catch up before we check everything was ok...
-                                        fileInfo.request.onreadystatechange = function DNDUpload_onreadystatechange()
-                                        {
-                                            if (fileInfo.request.readyState == 4)
-                                            {
+                                        fileInfo.request.onreadystatechange = function DNDUpload_onreadystatechange() {
+                                            if (fileInfo.request.readyState == 4) {
                                                 scope._processUploadCompletion(fileInfo);
                                             }
                                         }
                                     }
-                                    else
-                                    {
+                                    else {
                                         // If the request correctly indicates that the response has returned then we can process
                                         // it to ensure that files have been uploaded correctly.
                                         scope._processUploadCompletion(fileInfo);
                                     }
                                 }
-                                catch(exception)
-                                {
+                                catch (exception) {
                                     Alfresco.logger.error("The following error occurred processing an upload completion event: ", exception);
                                 }
                             };
@@ -970,20 +907,16 @@
                             /**
                              * UPLOAD FAILURE LISTENER
                              */
-                            var failureListener = function DNDUpload_failureListener(e)
-                            {
-                                try
-                                {
+                            var failureListener = function DNDUpload_failureListener(e) {
+                                try {
                                     var fileInfo = scope.fileStore[fileId];
 
                                     // This sometimes gets called twice, make sure we only adjust the gui once
-                                    if (fileInfo.state !== scope.STATE_FAILURE)
-                                    {
+                                    if (fileInfo.state !== scope.STATE_FAILURE) {
                                         scope._processUploadFailure(fileInfo, e.status);
                                     }
                                 }
-                                catch(exception)
-                                {
+                                catch (exception) {
                                     Alfresco.logger.error("The following error occurred processing an upload failure event: ", exception);
                                 }
                             };
@@ -992,8 +925,7 @@
                             // will break FireFox 7)...
                             var fileName = file.name,
                                 updateNameAndMimetype = false;
-                            if (!!scope.showConfig.newVersion && scope.showConfig.updateFilename && scope.showConfig.updateFilename !== fileName)
-                            {
+                            if (!!scope.showConfig.newVersion && scope.showConfig.updateFilename && scope.showConfig.updateFilename !== fileName) {
                                 updateNameAndMimetype = true;
                             }
 
@@ -1017,15 +949,13 @@
 
                             // Get the nodeRef to update if available (this is required to perform version update)...
                             var updateNodeRef = null;
-                            if (scope.suppliedConfig && scope.suppliedConfig.updateNodeRef)
-                            {
+                            if (scope.suppliedConfig && scope.suppliedConfig.updateNodeRef) {
                                 updateNodeRef = scope.suppliedConfig.updateNodeRef;
                             }
 
                             // Construct an object containing the data required for file upload...
                             var uploadDir = file.relativePath || "";
-                            if (scope.showConfig.uploadDirectory && scope.showConfig.uploadDirectory !== "/")
-                            {
+                            if (scope.showConfig.uploadDirectory && scope.showConfig.uploadDirectory !== "/") {
                                 uploadDir = scope.showConfig.uploadDirectory + "/" + uploadDir;
                             }
                             var uploadData =
@@ -1068,14 +998,13 @@
                             scope.panel.setFirstLastFocusable();
                             scope.panel.show();
                         }
-                        catch(exception)
-                        {
+                        catch (exception) {
                             Alfresco.logger.error("DNDUpload_show: The following exception occurred processing a file to upload: ", exception);
                         }
                     }
 
                     // If we've not hit the max, recurse info the function...
-                    scope._addFiles(i+1, max, scope);
+                    scope._addFiles(i + 1, max, scope);
                 }
             },
 
@@ -1086,10 +1015,8 @@
              * @method _processUploadCompletion
              * @private
              */
-            _processUploadCompletion: function DND__processUploadCompletion(fileInfo)
-            {
-                if (fileInfo.request.status == "200")
-                {
+            _processUploadCompletion: function DND__processUploadCompletion(fileInfo) {
+                if (fileInfo.request.status == "200") {
                     var response = Alfresco.util.parseJSON(fileInfo.request.responseText);
 
                     // update noderef and filename from response
@@ -1112,7 +1039,7 @@
                     }
                     // END CUSTOMIZE
 
-                     // Add the label "Successful" after the filename, updating the fileName from the response
+                    // Add the label "Successful" after the filename, updating the fileName from the response
                     Dom.addClass(fileInfo.progressStatusIncomplete, "hidden");
                     Dom.removeClass(fileInfo.progressStatusComplete, "hidden");
 
@@ -1133,8 +1060,7 @@
                     // Upload remaining files
                     this._spawnUploads();
                 }
-                else
-                {
+                else {
                     // Process the upload failure...
                     this._processUploadFailure(fileInfo, fileInfo.request.status);
                 }
@@ -1148,42 +1074,35 @@
              * @method _processUploadFailure
              * @private
              */
-            _processUploadFailure: function DND__processUploadFailure(fileInfo, status)
-            {
-                if (status === 401)
-                {
+            _processUploadFailure: function DND__processUploadFailure(fileInfo, status) {
+                if (status === 401) {
                     var redirect = fileInfo.request.getResponseHeader["Location"];
-                    if (redirect)
-                    {
+                    if (redirect) {
                         window.location.href = window.location.protocol + "//" + window.location.host + redirect;
                         return;
                     }
-                    else
-                    {
+                    else {
                         window.location.reload(true);
                         return;
                     }
                 }
 
                 fileInfo.state = this.STATE_FAILURE;
-                var errormsg = fileInfo.request.status+" "+fileInfo.request.statusText; //default
+                var errormsg = fileInfo.request.status + " " + fileInfo.request.statusText; //default
 
-                try
-                {
+                try {
                     errormsg = JSON.parse(fileInfo.request.responseText).message;
                     errormsg = errormsg.substring(errormsg.indexOf(" ") + 1);
                 }
-                catch(exception)
-                {
-                    Alfresco.logger.error("The following error occurred parsing the upload failure message for "+errormsg+": " + exception);
+                catch (exception) {
+                    Alfresco.logger.error("The following error occurred parsing the upload failure message for " + errormsg + ": " + exception);
                 }
 
                 // Add the failure label to the filename & and as a title attribute
                 var key = "label.failure." + status,
                     msg = Alfresco.util.message(key, this.name);
 
-                if (msg == key)
-                {
+                if (msg == key) {
                     msg = Alfresco.util.message("label.failure", this.name, errormsg);
                 }
                 fileInfo.fileSizeInfo["innerHTML"] = fileInfo.fileSizeInfo["innerHTML"] + " (" + msg + ")";
@@ -1219,8 +1138,7 @@
              * @method _updateAggregateProgress
              * @private
              */
-            _updateAggregateProgress: function DNDUpload__updateAggregateProgress(fileInfo, loaded)
-            {
+            _updateAggregateProgress: function DNDUpload__updateAggregateProgress(fileInfo, loaded) {
                 // Deduct the last loaded about from the overall loaded value, then add the full
                 // file size. This can then be used to calculate the overall progress and set the
                 // style of the progress bar...
@@ -1237,10 +1155,8 @@
              * @method _resetGUI
              * @private
              */
-            _resetGUI: function DNDUpload__resetGUI()
-            {
-                if (this.statusText == null)
-                {
+            _resetGUI: function DNDUpload__resetGUI() {
+                if (this.statusText == null) {
                     this.onReady();
                 }
 
@@ -1261,7 +1177,6 @@
                 Dom.setStyle(this.id + "-aggregate-progress-span", "left", "-620px");
                 Dom.removeClass(this.aggregateDataWrapper, "hidden");
                 Dom.get(this.id + "-tags").value = '';
-                // alert('reset tags');
             },
 
             /**
@@ -1269,11 +1184,9 @@
              *
              * @method onPostRenderEvent
              */
-            onPostRenderEvent: function DNDUpload_onPostRenderEvent(e)
-            {
+            onPostRenderEvent: function DNDUpload_onPostRenderEvent(e) {
                 // Display the upload button since all files are rendered
-                if (this.dataTable.getRecordSet().getLength() > 0)
-                {
+                if (this.dataTable.getRecordSet().getLength() > 0) {
                     this.panel.setFirstLastFocusable();
                     this.panel.focusFirst();
                 }
@@ -1287,10 +1200,8 @@
              * @method onRowAddEvent
              * @param event {object} a DataTable "rowAdd" event
              */
-            onRowAddEvent: function DNDUpload_onRowAddEvent(event)
-            {
-                try
-                {
+            onRowAddEvent: function DNDUpload_onRowAddEvent(event) {
+                try {
                     var data = event.record.getData();
                     var fileInfo = this.fileStore[data.id];
 
@@ -1300,8 +1211,7 @@
 
                     this._updateAggregateStatus();
                 }
-                catch(exception)
-                {
+                catch (exception) {
                     Alfresco.logger.error("The following error occurred initiating upload: " + exception);
                 }
             },
@@ -1311,16 +1221,13 @@
              *
              * @method _spawnUploads
              */
-            _spawnUploads: function DNDUpload__spawnUploads()
-            {
+            _spawnUploads: function DNDUpload__spawnUploads() {
                 var length = this.dataTable.getRecordSet().getLength();
-                for (var i = 0; i < length; i++)
-                {
+                for (var i = 0; i < length; i++) {
                     var record = this.dataTable.getRecordSet().getRecord(i);
                     var fileId = record.getData("id");
                     var fileInfo = this.fileStore[fileId];
-                    if (fileInfo.state == this.STATE_ADDED)
-                    {
+                    if (fileInfo.state == this.STATE_ADDED) {
                         // Start upload
                         this._startUpload(fileInfo);
 
@@ -1336,27 +1243,22 @@
              * @method _startUpload
              * @param fileInfo {object} Contains info about the file and its request.
              */
-            _startUpload: function DNDUpload__startUpload(fileInfo)
-            {
+            _startUpload: function DNDUpload__startUpload(fileInfo) {
                 // Mark file as being uploaded
                 fileInfo.state = this.STATE_UPLOADING;
 
                 var url;
-                if (this.showConfig.uploadURL === null)
-                {
+                if (this.showConfig.uploadURL === null) {
                     url = Alfresco.constants.PROXY_URI + "api/upload";
                 }
-                else
-                {
+                else {
                     url = Alfresco.constants.PROXY_URI + this.showConfig.uploadURL;
                 }
-                if (Alfresco.util.CSRFPolicy.isFilterEnabled())
-                {
+                if (Alfresco.util.CSRFPolicy.isFilterEnabled()) {
                     url += "?" + Alfresco.util.CSRFPolicy.getParameter() + "=" + encodeURIComponent(Alfresco.util.CSRFPolicy.getToken());
                 }
 
-                if (this.uploadMethod === this.FORMDATA_UPLOAD)
-                {
+                if (this.uploadMethod === this.FORMDATA_UPLOAD) {
                     // For Browsers that support it (currently FireFox 4), the FormData object is the best
                     // object to use for file upload as it supports asynchronous multipart upload without
                     // the need to read the entire object into memory.
@@ -1373,91 +1275,37 @@
                     formData.append("thumbnails", fileInfo.uploadData.thumbnails);
                     formData.append("updatenameandmimetype", fileInfo.uploadData.updateNameAndMimetype)
 
-                    if (fileInfo.uploadData.updateNodeRef)
-                    {
+                    if (fileInfo.uploadData.updateNodeRef) {
                         formData.append("updateNodeRef", fileInfo.uploadData.updateNodeRef);
                     }
-                    else
-                    {
+                    else {
                         formData.append("siteId", fileInfo.uploadData.siteId);
                         formData.append("containerId", fileInfo.uploadData.containerId);
                     }
 
-                    if (fileInfo.uploadData.description)
-                    {
+                    if (fileInfo.uploadData.description) {
                         formData.append("description", fileInfo.uploadData.description);
                     }
-                    // CUSTOMIZE
-                    // Create Tags
-                    var tags = Dom.get(this.id + "-tags").value;
 
-                    if (tags) {
-                        Alfresco.util.Ajax.jsonRequest(
-                            {
-                                method: "POST",
-                                url: Alfresco.constants.PROXY_URI + "api/tag/workspace/SpacesStore",
-                                dataObj: {
-                                    "name": tags
-                                },
-                                successCallback:
-                                    {
-                                        fn: function(response)
-                                        {
-                                            fileInfo.tags = response.json.nodeRef
-                                            fileInfo.request.open("POST",  url, true);
-                                            fileInfo.request.send(formData);
-                                            fileInfo.request.onreadystatechange = function() {
-                                                if (this.status === 401)
-                                                {
-                                                    var redirect = this.getResponseHeader["Location"];
-                                                    if (redirect)
-                                                    {
-                                                        alert('href');
-                                                       // window.location.href = window.location.protocol + "//" + window.location.host + redirect;
-                                                        return;
-                                                    }
-                                                    else
-                                                    {
-                                                        alert('redirect');
-                                                       // window.location.reload(true);
-                                                        return;
-                                                    }
-                                                }
-                                            };
-
-                                        },
-                                        scope: this
-                                    },
-                                failureCallback: function() {
-                                    Alfresco.logger.error("Create tags: The following error occurred: ");
-                                }
-                            });
-                    } else {
-                        fileInfo.tags = '';
-                        fileInfo.request.open("POST",  url, true);
-                        fileInfo.request.send(formData);
-                        fileInfo.request.onreadystatechange = function() {
-                            if (this.status === 401)
-                            {
-                                var redirect = this.getResponseHeader["Location"];
-                                if (redirect)
-                                {
-                                   // window.location.href = window.location.protocol + "//" + window.location.host + redirect;
-                                    return;
-                                }
-                                else
-                                {
-                                  //  window.location.reload(true);
-                                    return;
-                                }
+                    fileInfo.request.open("POST", url, true);
+                    fileInfo.request.send(formData);
+                    fileInfo.request.onreadystatechange = function () {
+                        if (this.status === 401) {
+                            var redirect = this.getResponseHeader["Location"];
+                            if (redirect) {
+                                window.location.href = window.location.protocol + "//" + window.location.host + redirect;
+                                return;
                             }
-                        };
-                    }
+                            else {
+                                window.location.reload(true);
+                                return;
+                            }
+                        }
+                    };
 
 
                 }
-                else if (this.uploadMethod === this.INMEMORY_UPLOAD)
-                {
+                else if (this.uploadMethod === this.INMEMORY_UPLOAD) {
                     Alfresco.logger.debug("Using custom multipart upload");
 
                     // PLEASE NOTE: Be *VERY* careful modifying the following code, this carefully constructs a multipart formatted request...
@@ -1474,12 +1322,10 @@
                     customFormData += rn + "Content-Disposition: form-data; name=\"filename\"";
                     customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.filename)) + rn + "--" + multipartBoundary;
                     customFormData += rn + "Content-Disposition: form-data; name=\"destination\"";
-                    if (fileInfo.uploadData.destination !== null)
-                    {
+                    if (fileInfo.uploadData.destination !== null) {
                         customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.destination)) + rn + "--" + multipartBoundary;
                     }
-                    else
-                    {
+                    else {
                         customFormData += rn + rn + rn + "--" + multipartBoundary;
                     }
                     customFormData += rn + "Content-Disposition: form-data; name=\"siteId\"";
@@ -1490,32 +1336,27 @@
                     customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.uploaddirectory)) + rn + "--" + multipartBoundary + "--";
                     customFormData += rn + "Content-Disposition: form-data; name=\"majorVersion\"";
                     customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.majorVersion)) + rn + "--" + multipartBoundary + "--";
-                    if (fileInfo.uploadData.updateNodeRef)
-                    {
+                    if (fileInfo.uploadData.updateNodeRef) {
                         customFormData += rn + "Content-Disposition: form-data; name=\"updateNodeRef\"";
                         customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.updateNodeRef)) + rn + "--" + multipartBoundary + "--";
                     }
-                    if (fileInfo.uploadData.description)
-                    {
+                    if (fileInfo.uploadData.description) {
                         customFormData += rn + "Content-Disposition: form-data; name=\"description\"";
                         customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.description)) + rn + "--" + multipartBoundary + "--";
                     }
-                    if (fileInfo.uploadData.username)
-                    {
+                    if (fileInfo.uploadData.username) {
                         customFormData += rn + "Content-Disposition: form-data; name=\"username\"";
                         customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.username)) + rn + "--" + multipartBoundary + "--";
                     }
-                    if (fileInfo.uploadData.overwrite)
-                    {
+                    if (fileInfo.uploadData.overwrite) {
                         customFormData += rn + "Content-Disposition: form-data; name=\"overwrite\"";
                         customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.overwrite)) + rn + "--" + multipartBoundary + "--";
                     }
-                    if (fileInfo.uploadData.thumbnails)
-                    {
+                    if (fileInfo.uploadData.thumbnails) {
                         customFormData += rn + "Content-Disposition: form-data; name=\"thumbnails\"";
                         customFormData += rn + rn + unescape(encodeURIComponent(fileInfo.uploadData.thumbnails)) + rn + "--" + multipartBoundary + "--";
                     }
-                    fileInfo.request.open("POST",  url, true);
+                    fileInfo.request.open("POST", url, true);
                     fileInfo.request.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + multipartBoundary);
                     fileInfo.request.sendAsBinary(customFormData);
                 }
@@ -1528,8 +1369,7 @@
              * @method onBrowseButtonClick
              * @param event {object} a Button "click" event
              */
-            onUploadButtonClick: function DNDUpload_onUploadButtonClick()
-            {
+            onUploadButtonClick: function DNDUpload_onUploadButtonClick() {
                 this.state = this.STATE_UPLOADING;
                 Dom.removeClass(this.id + "-filelist-table", "hidden");
                 Dom.removeClass(this.id + "-aggregate-data-wrapper", "hidden");
@@ -1553,34 +1393,72 @@
              * @method onBrowseButtonClick
              * @param event {object} a Button "click" event
              */
-            onCancelOkButtonClick: function DNDUpload_onCancelOkButtonClick()
-            {
+            saveTags: function () {
+                var files = this.fileStore;
+                var tags = Dom.get(this.id + "-tags").value;
+                if (!tags) {
+                    return;
+                } else {
+                    Alfresco.util.Ajax.jsonRequest(
+                        {
+                            method: "POST",
+                            url: Alfresco.constants.PROXY_URI + "api/tag/workspace/SpacesStore",
+                            dataObj: {
+                                "name": tags
+                            },
+                            scope: this,
+                            successCallback: {
+                                fn: function (response) {
+                                    var z = 0;
+                                    var count = files.length;
+                                    for (var i in files) {
+                                        z++;
+                                        var f = files[i];
+                                        if (f) {
+                                            var nodeRef = new Alfresco.util.NodeRef(f.nodeRef)
+                                            Alfresco.util.Ajax.jsonRequest({
+                                                method: "POST",
+                                                url: Alfresco.constants.PROXY_URI + "api/node/" + nodeRef.uri + "/formprocessor",
+                                                dataObj: {
+
+                                                    "prop_cm_taggable": response.json.nodeRef
+                                                },
+                                                successCallback: {
+                                                    fn: function (response) {
+                                                        Promise.resolve()
+                                                    }
+                                                },
+                                                scope: this
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                }
+            },
+            onCancelOkButtonClick: function DNDUpload_onCancelOkButtonClick() {
                 Dom.addClass(this.compareVersionsSection, "hidden");
 
                 var message, i;
-                if (this.state === this.STATE_UPLOADING)
-                {
+                if (this.state === this.STATE_UPLOADING) {
                     this._cancelAllUploads();
 
                     // Inform the user if any files were uploaded before the rest was cancelled
                     var noOfUploadedFiles = 0;
-                    for (i in this.fileStore)
-                    {
-                        if (this.fileStore[i] && this.fileStore[i].state === this.STATE_SUCCESS)
-                        {
+                    for (i in this.fileStore) {
+                        if (this.fileStore[i] && this.fileStore[i].state === this.STATE_SUCCESS) {
                             noOfUploadedFiles++;
                         }
                     }
-                    if (noOfUploadedFiles > 0)
-                    {
+                    if (noOfUploadedFiles > 0) {
                         message = YAHOO.lang.substitute(this.msg("message.cancelStatus"),
                             {
                                 "0": noOfUploadedFiles
                             });
                     }
 
-                    if (!this.showConfig.suppressRefreshEvent)
-                    {
+                    if (!this.showConfig.suppressRefreshEvent) {
                         // Tell the document list to refresh itself if present
                         YAHOO.Bubbling.fire("metadataRefresh",
                             {
@@ -1588,62 +1466,62 @@
                             });
                     }
                 }
-                else if (this.state === this.STATE_FINISHED)
-                {
+                else if (this.state === this.STATE_FINISHED) {
                     // Tell the document list to refresh itself if present and to
                     // highlight the uploaded file (if multi upload was used display the first file)
                     var fileName = null, f;
-                    for (i in this.fileStore)
-                    {
+                    for (i in this.fileStore) {
                         f = this.fileStore[i];
-                        if (f && f.state === this.STATE_SUCCESS)
-                        {
+                        if (f && f.state === this.STATE_SUCCESS) {
                             fileName = f.fileName;
                             break;
                         }
                     }
-                    if (!this.showConfig.suppressRefreshEvent)
-                    {
-                        if (fileName)
-                        {
-                            YAHOO.Bubbling.fire("metadataRefresh",
+                    // CUSTOMIZE
+                    // Create Tags
+                    var promise = this.saveTags();
+                    setTimeout(function () {
+                        if (!this.showConfig.suppressRefreshEvent) {
+                            if (fileName) {
+                                YAHOO.Bubbling.fire("metadataRefresh",
+                                    {
+                                        currentPath: this.showConfig.path,
+                                        highlightFile: fileName
+                                    });
+                            }
+                            else {
+                                YAHOO.Bubbling.fire("metadataRefresh",
+                                    {
+                                        currentPath: this.showConfig.path
+                                    });
+                            }
+
+                            // potentially new folders created under parent
+                            YAHOO.Bubbling.fire("folderCreated",
                                 {
-                                    currentPath: this.showConfig.path,
-                                    highlightFile: fileName
+                                    parentNodeRef: this.showConfig.parentNodeRef
                                 });
                         }
-                        else
-                        {
-                            YAHOO.Bubbling.fire("metadataRefresh",
+
+                        // Remove all files and references for this upload "session"
+                        this._clear();
+
+                        // Hide the panel
+                        this.panel.hide();
+
+                        // Disable the Esc key listener
+                        this.widgets.escapeListener.disable();
+
+                        // Inform the user if any files were uploaded before the rest was cancelled
+                        if (message) {
+                            Alfresco.util.PopupManager.displayPrompt(
                                 {
-                                    currentPath: this.showConfig.path
+                                    text: message
                                 });
                         }
+                    }, 3000)
 
-                        // potentially new folders created under parent
-                        YAHOO.Bubbling.fire("folderCreated",
-                            {
-                                parentNodeRef: this.showConfig.parentNodeRef
-                            });
-                    }
-                }
 
-                // Remove all files and references for this upload "session"
-                this._clear();
-
-                // Hide the panel
-                this.panel.hide();
-
-                // Disable the Esc key listener
-                this.widgets.escapeListener.disable();
-
-                // Inform the user if any files were uploaded before the rest was cancelled
-                if (message)
-                {
-                    Alfresco.util.PopupManager.displayPrompt(
-                        {
-                            text: message
-                        });
                 }
             },
 
@@ -1653,29 +1531,24 @@
              * @method _applyConfig
              * @private
              */
-            _applyConfig: function DNDUpload__applyConfig()
-            {
+            _applyConfig: function DNDUpload__applyConfig() {
                 // Generate the title based on number of files and destination
                 var title, i18n;
-                if (this.showConfig.mode === this.MODE_SINGLE_UPLOAD)
-                {
+                if (this.showConfig.mode === this.MODE_SINGLE_UPLOAD) {
                     i18n = this.msg("header.singleUpload");
                     this.titleText.innerHTML = i18n;
                 }
-                else if (this.showConfig.mode === this.MODE_MULTI_UPLOAD)
-                {
+                else if (this.showConfig.mode === this.MODE_MULTI_UPLOAD) {
                     i18n = this.showConfig.files.length == 1 ? "header.multiUpload.singleFile" : "header.multiUpload";
                     var location = this.showConfig.uploadDirectoryName == "" ? this.msg("label.documents") : this.showConfig.uploadDirectoryName;
                     this.titleText.innerHTML = this.msg(i18n, '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/documentlibrary/images/folder-open-16.png" class="title-folder" />' + $html(location));
                 }
-                else if (this.showConfig.mode === this.MODE_SINGLE_UPDATE)
-                {
+                else if (this.showConfig.mode === this.MODE_SINGLE_UPDATE) {
                     i18n = this.msg("header.singleUpdate");
                     this.titleText.innerHTML = i18n;
                 }
 
-                if (this.showConfig.mode === this.MODE_SINGLE_UPDATE)
-                {
+                if (this.showConfig.mode === this.MODE_SINGLE_UPDATE) {
                     // Display the version input form
                     Dom.removeClass(this.versionSection, "hidden");
                     var versions = (this.showConfig.updateVersion || "1.0").split("."),
@@ -1686,22 +1559,19 @@
                     Dom.get(this.id + "-minorVersion").innerHTML = this.msg("label.minorVersion.more", majorVersion + "." + (1 + minorVersion));
                     Dom.get(this.id + "-majorVersion").innerHTML = this.msg("label.majorVersion.more", (1 + majorVersion) + ".0");
                 }
-                else
-                {
+                else {
                     // Hide the version input form
                     Dom.addClass(this.versionSection, "hidden");
                 }
 
-                if (this.showConfig.mode === this.MODE_MULTI_UPLOAD)
-                {
+                if (this.showConfig.mode === this.MODE_MULTI_UPLOAD) {
                     // Show the upload status label, only interesting for multiple files
                     Dom.removeClass(this.statusText, "hidden");
 
                     // Make the file list long
                     this.dataTable.set("height", "204px", true);
                 }
-                else
-                {
+                else {
                     // Hide the upload status label, only interesting for multiple files
                     Dom.addClass(this.statusText, "hidden");
 
@@ -1716,8 +1586,7 @@
              * @method _createEmptyDataTable
              * @private
              */
-            _createEmptyDataTable: function DNDUpload__createEmptyDataTable()
-            {
+            _createEmptyDataTable: function DNDUpload__createEmptyDataTable() {
                 /**
                  * Save a reference of 'this' so that the formatter below can use it
                  * later (since the formatter method gets called with another scope
@@ -1731,14 +1600,11 @@
                  * @param el HTMLElement the td element
                  * @param oRecord Holds the file data object
                  */
-                var formatLeftCell = function(el, oRecord, oColumn, oData)
-                {
-                    try
-                    {
+                var formatLeftCell = function (el, oRecord, oColumn, oData) {
+                    try {
                         myThis._formatCellElements(el, oRecord, myThis.fileItemTemplates.left);
                     }
-                    catch(exception)
-                    {
+                    catch (exception) {
                         Alfresco.logger.error("DNDUpload__createEmptyDataTable (formatLeftCell): The following error occurred: ", exception);
                     }
                 };
@@ -1749,14 +1615,11 @@
                  * @param el HTMLElement the td element
                  * @param oRecord Holds the file data object
                  */
-                var formatCenterCell = function(el, oRecord, oColumn, oData)
-                {
-                    try
-                    {
+                var formatCenterCell = function (el, oRecord, oColumn, oData) {
+                    try {
                         myThis._formatCellElements(el, oRecord, myThis.fileItemTemplates.center);
                     }
-                    catch(exception)
-                    {
+                    catch (exception) {
                         Alfresco.logger.error("DNDUpload__createEmptyDataTable (formatCenterCell): The following error occurred: ", exception);
                     }
                 };
@@ -1767,14 +1630,11 @@
                  * @param el HTMLElement the td element
                  * @param oRecord Holds the file data object
                  */
-                var formatRightCell = function(el, oRecord, oColumn, oData)
-                {
-                    try
-                    {
+                var formatRightCell = function (el, oRecord, oColumn, oData) {
+                    try {
                         myThis._formatCellElements(el, oRecord, myThis.fileItemTemplates.right);
                     }
-                    catch(exception)
-                    {
+                    catch (exception) {
                         Alfresco.logger.error("DNDUpload__createEmptyDataTable (formatRightCell): The following error occurred: ", exception);
                     }
                 };
@@ -1788,8 +1648,7 @@
                  * @param oRecord Holds the file data object
                  * @param template the template to display in the column
                  */
-                this._formatCellElements = function(el, oRecord, template)
-                {
+                this._formatCellElements = function (el, oRecord, template) {
                     var record = oRecord.getData(),
                         fileId = record.id;
 
@@ -1800,13 +1659,11 @@
 
                     // Save references to elements that will be updated during upload.
                     var progress = Dom.getElementsByClassName("fileupload-progressSuccess-span", "span", templateInstance);
-                    if (progress.length == 1)
-                    {
+                    if (progress.length == 1) {
                         this.fileStore[fileId].progress = progress[0];
                     }
                     var progressInfo = Dom.getElementsByClassName("fileupload-progressInfo-span", "span", templateInstance);
-                    if (progressInfo.length == 1)
-                    {
+                    if (progressInfo.length == 1) {
                         // Display the file size in human readable format after the filename.
                         var fileInfoStr = record.name;// + " (" + Alfresco.util.formatFileSize(record.size) + ")";
                         templateInstance.setAttribute("title", fileInfoStr);
@@ -1821,8 +1678,7 @@
                     }
 
                     var fileSize = Dom.getElementsByClassName("fileupload-filesize-span", "span", templateInstance);
-                    if (fileSize.length == 1)
-                    {
+                    if (fileSize.length == 1) {
                         // Display the file size in human readable format below the filename.
                         var fileInfoStr = Alfresco.util.formatFileSize(record.size);
                         fileSize = fileSize[0];
@@ -1832,29 +1688,24 @@
 
                     // Save a reference to the contentType dropdown so we can find each file's contentType before upload.
                     var contentType = Dom.getElementsByClassName("fileupload-contentType-select", "select", templateInstance);
-                    if (contentType.length == 1)
-                    {
+                    if (contentType.length == 1) {
                         this.fileStore[fileId].contentType = contentType[0];
                     }
-                    else
-                    {
+                    else {
                         contentType = Dom.getElementsByClassName("fileupload-contentType-input", "input", templateInstance);
-                        if (contentType.length == 1)
-                        {
+                        if (contentType.length == 1) {
                             this.fileStore[fileId].contentType = contentType[0];
                         }
                     }
 
                     // Save references to elements that will be updated during upload.
                     var progressPercentage = Dom.getElementsByClassName("fileupload-percentage-span", "span", templateInstance);
-                    if (progressPercentage.length == 1)
-                    {
+                    if (progressPercentage.length == 1) {
                         this.fileStore[fileId].progressPercentage = progressPercentage[0];
                     }
 
                     var progressStatus = Dom.getElementsByClassName("fileupload-status-img", "img", templateInstance);
-                    if (progressStatus.length == 3)
-                    {
+                    if (progressStatus.length == 3) {
                         this.fileStore[fileId].progressStatusIncomplete = progressStatus[0];
                         this.fileStore[fileId].progressStatusComplete = progressStatus[1];
                         this.fileStore[fileId].progressStatusFailed = progressStatus[2];
@@ -1866,9 +1717,9 @@
 
                 // Definition of the data table column
                 var myColumnDefs = [
-                    { key: "id", className:"col-left", resizable: false, formatter: formatLeftCell },
-                    { key: "name", className:"col-center", resizable: false, formatter: formatCenterCell },
-                    { key: "created", className:"col-right", resizable: false, formatter: formatRightCell }
+                    {key: "id", className: "col-left", resizable: false, formatter: formatLeftCell},
+                    {key: "name", className: "col-center", resizable: false, formatter: formatCenterCell},
+                    {key: "created", className: "col-right", resizable: false, formatter: formatRightCell}
                 ];
 
                 // The data tables underlying data source.
@@ -1903,8 +1754,7 @@
              * @param data {object} a file data object describing a file
              * @private
              */
-            _getUniqueFileToken: function DNDUpload__getUniqueFileToken(data)
-            {
+            _getUniqueFileToken: function DNDUpload__getUniqueFileToken(data) {
                 return data.name + ":" + data.size;
             },
 
@@ -1914,23 +1764,20 @@
              * @method _updateStatus
              * @private
              */
-            _updateStatus: function DNDUpload__updateStatus()
-            {
-                if (this.noOfFailedUploads > 0)
-                {
+            _updateStatus: function DNDUpload__updateStatus() {
+                if (this.noOfFailedUploads > 0) {
                     this.statusText.innerHTML = YAHOO.lang.substitute(this.msg("label.uploadStatus.withFailures"),
                         {
-                            "0" : this.noOfSuccessfulUploads,
-                            "1" : this.dataTable.getRecordSet().getLength(),
-                            "2" : this.noOfFailedUploads
+                            "0": this.noOfSuccessfulUploads,
+                            "1": this.dataTable.getRecordSet().getLength(),
+                            "2": this.noOfFailedUploads
                         });
                 }
-                else
-                {
+                else {
                     this.statusText.innerHTML = YAHOO.lang.substitute(this.msg("label.uploadStatus"),
                         {
-                            "0" : this.noOfSuccessfulUploads,
-                            "1" : this.dataTable.getRecordSet().getLength()
+                            "0": this.noOfSuccessfulUploads,
+                            "1": this.dataTable.getRecordSet().getLength()
                         });
                 }
             },
@@ -1942,12 +1789,11 @@
              * @method _updateAggregateStatus
              * @private
              */
-            _updateAggregateStatus: function DNDUpload__updateAggregateStatus()
-            {
+            _updateAggregateStatus: function DNDUpload__updateAggregateStatus() {
                 this.aggregateProgressText.innerHTML = YAHOO.lang.substitute(this.msg("label.aggregateUploadStatus"),
                     {
-                        "0" : this.dataTable.getRecordSet().getLength(),
-                        "1" : Alfresco.util.formatFileSize(this.aggregateUploadTargetSize)
+                        "0": this.dataTable.getRecordSet().getLength(),
+                        "1": Alfresco.util.formatFileSize(this.aggregateUploadTargetSize)
                     });
             },
 
@@ -1958,10 +1804,8 @@
              * @method _adjustGuiIfFinished
              * @private
              */
-            _adjustGuiIfFinished: function DNDUpload__adjustGuiIfFinished()
-            {
-                try
-                {
+            _adjustGuiIfFinished: function DNDUpload__adjustGuiIfFinished() {
+                try {
                     var objComplete =
                         {
                             successful: [],
@@ -1970,13 +1814,10 @@
                     var file = null;
 
                     // Go into finished state if all files are finished: successful or failures
-                    for (var i in this.fileStore)
-                    {
+                    for (var i in this.fileStore) {
                         file = this.fileStore[i];
-                        if (file)
-                        {
-                            if (file.state == this.STATE_SUCCESS)
-                            {
+                        if (file) {
+                            if (file.state == this.STATE_SUCCESS) {
                                 // Push successful file
                                 objComplete.successful.push(
                                     {
@@ -1984,16 +1825,14 @@
                                         nodeRef: file.nodeRef
                                     });
                             }
-                            else if (file.state == this.STATE_FAILURE)
-                            {
+                            else if (file.state == this.STATE_FAILURE) {
                                 // Push failed file
                                 objComplete.failed.push(
                                     {
                                         fileName: file.fileName
                                     });
                             }
-                            else
-                            {
+                            else {
                                 return;
                             }
                         }
@@ -2005,19 +1844,16 @@
                     this.widgets.cancelOkButton.focus();
 
                     var callback = this.showConfig.onFileUploadComplete;
-                    if (callback && typeof callback.fn == "function")
-                    {
+                    if (callback && typeof callback.fn == "function") {
                         // Call the onFileUploadComplete callback in the correct scope
-                   //     callback.fn.call((typeof callback.scope == "object" ? callback.scope : this), objComplete, callback.obj);
+                        //     callback.fn.call((typeof callback.scope == "object" ? callback.scope : this), objComplete, callback.obj);
                     }
 
-                    if (objComplete.failed.length === 0)
-                    {
-                        this.onCancelOkButtonClick();
+                    if (objComplete.failed.length === 0) {
+                        //                        this.onCancelOkButtonClick();
                     }
                 }
-                catch(exception)
-                {
+                catch (exception) {
                     Alfresco.logger.error("_adjustGuiIfFinished", exception);
                 }
             },
@@ -2028,18 +1864,15 @@
              * @method _cancelAllUploads
              * @private
              */
-            _cancelAllUploads: function DNDUpload__cancelAllUploads()
-            {
+            _cancelAllUploads: function DNDUpload__cancelAllUploads() {
                 // Cancel all uploads inside the flash movie
                 var length = this.dataTable.getRecordSet().getLength();
-                for (var i = 0; i < length; i++)
-                {
+                for (var i = 0; i < length; i++) {
                     var record = this.dataTable.getRecordSet().getRecord(i);
                     var fileId = record.getData("id");
 
                     var fileInfo = this.fileStore[fileId];
-                    if (fileInfo.state === this.STATE_UPLOADING)
-                    {
+                    if (fileInfo.state === this.STATE_UPLOADING) {
                         // We will only attempt an upload abort if the file is still being uploaded (there is
                         // no point in aborting if the file has completed or failed)
                         Alfresco.logger.debug("Aborting upload of file: " + fileInfo.fileName);
@@ -2055,8 +1888,7 @@
              * @method _clear
              * @private
              */
-            _clear: function DNDUpload__clear()
-            {
+            _clear: function DNDUpload__clear() {
                 /**
                  * Remove all references to files inside the data table, flash movie
                  * and this class's references.
@@ -2073,8 +1905,7 @@
              * @method _isNewFileName
              * @private
              */
-            _isNewFileName: function DNDUpload__isNewFileName(jsNode, newVersionFile)
-            {
+            _isNewFileName: function DNDUpload__isNewFileName(jsNode, newVersionFile) {
                 var prevFileName = jsNode.properties["cm:name"];
                 var newFileName = newVersionFile.name;
                 return (prevFileName != newFileName);
@@ -2086,13 +1917,12 @@
              * @method _updateCompareVersionsSection
              * @private
              */
-            _updateCompareVersionsSection: function DNDUpload__updateCompareVersionsSection(jsNode, newVersionFile)
-            {
+            _updateCompareVersionsSection: function DNDUpload__updateCompareVersionsSection(jsNode, newVersionFile) {
                 this.getMimetypeDescription(newVersionFile.type, this._extractNewVersionMimetypeDescription, this._setNewVersionDefaultMimetype);
                 Dom.get(this.id + "-current-version-value").innerHTML = jsNode.properties["cm:versionLabel"];
                 Dom.get(this.id + "-current-version-filename").innerHTML = jsNode.properties["cm:name"];
                 Dom.get(this.id + "-current-version-title").innerHTML = jsNode.hasProperty("cm:title") ? jsNode.properties["cm:title"] : this.msg("label.none");
-                Dom.get(this.id + "-current-version-mimetype").innerHTML =  jsNode.mimetypeDisplayName;
+                Dom.get(this.id + "-current-version-mimetype").innerHTML = jsNode.mimetypeDisplayName;
                 Dom.get(this.id + "-current-version-last-modified").innerHTML = Alfresco.util.formatDate(this.showConfig.jsNode.properties["cm:modified"].iso8601, "dd/mm/yyyy");
                 Dom.get(this.id + "-current-version-modified-by").innerHTML = jsNode.properties["cm:modifier"].displayName;
                 Dom.get(this.id + "-current-version-icon").src = Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util.getFileIconByMimetype(jsNode.mimetype, 48);
@@ -2106,8 +1936,7 @@
              * @method _setComparisonNewVersionMimetype
              * @private
              */
-            _setComparisonNewVersionMimetype: function DNDUpload__setComparisonNewVersionMimetype(mimetype)
-            {
+            _setComparisonNewVersionMimetype: function DNDUpload__setComparisonNewVersionMimetype(mimetype) {
                 Dom.get(this.id + "-new-version-mimetype").innerHTML = mimetype !== "" ? mimetype : this.msg("label.mimetype.unknown");
             },
 
@@ -2117,17 +1946,14 @@
              * @method _extractNewVersionMimetypeDescription
              * @private
              */
-            _extractNewVersionMimetypeDescription: function DNDUpload__extractNewVersionMimetypeDescription(scope, response, mimetype)
-            {
+            _extractNewVersionMimetypeDescription: function DNDUpload__extractNewVersionMimetypeDescription(scope, response, mimetype) {
                 var mimetypesResponse = response.json.data;
                 var selectedMimetype = String(new Object(mimetype)).toLowerCase();
 
-                if (mimetypesResponse[selectedMimetype])
-                {
+                if (mimetypesResponse[selectedMimetype]) {
                     scope._setComparisonNewVersionMimetype(mimetypesResponse[selectedMimetype].description);
                 }
-                else
-                {
+                else {
                     scope._setComparisonNewVersionMimetype(selectedMimetype);
                 }
             },
@@ -2138,8 +1964,7 @@
              * @method _setNewVersionDefaultMimetype
              * @private
              */
-            _setNewVersionDefaultMimetype: function DNDUpload__setNewVersionDefaultMimetype(scope, mimetype)
-            {
+            _setNewVersionDefaultMimetype: function DNDUpload__setNewVersionDefaultMimetype(scope, mimetype) {
                 scope._setComparisonNewVersionMimetype(mimetype);
             },
 
@@ -2149,22 +1974,19 @@
              *
              * @method getMimetypeDescription
              */
-            getMimetypeDescription: function DNDUpload_getMimetypeDescription(mimetype, successCallbackFn, failureCallbackFn)
-            {
+            getMimetypeDescription: function DNDUpload_getMimetypeDescription(mimetype, successCallbackFn, failureCallbackFn) {
                 Alfresco.util.Ajax.jsonGet({
                     url: Alfresco.constants.PROXY_URI + "api/mimetypes/descriptions",
                     successCallback:
                         {
-                            fn: function(response)
-                            {
+                            fn: function (response) {
                                 successCallbackFn(this, response, mimetype);
                             },
                             scope: this
                         },
                     failureCallback:
                         {
-                            fn: function()
-                            {
+                            fn: function () {
                                 failureCallbackFn(this, mimetype);
                             },
                             scope: this
