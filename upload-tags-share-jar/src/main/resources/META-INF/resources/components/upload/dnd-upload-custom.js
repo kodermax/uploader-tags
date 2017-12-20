@@ -1393,49 +1393,54 @@
              * @method onBrowseButtonClick
              * @param event {object} a Button "click" event
              */
-            saveTags: function () {
-                var files = this.fileStore;
-                var tags = Dom.get(this.id + "-tags").value;
-                if (!tags) {
-                    return;
-                } else {
-                   Alfresco.util.Ajax.jsonRequest(
-                        {
-                            method: "POST",
-                            url: Alfresco.constants.PROXY_URI + "api/tag/workspace/SpacesStore",
-                            dataObj: {
-                                "name": tags
-                            },
-                            scope: this,
-                            successCallback: {
-                                fn: function (response) {
-                                    var z = 0;
-                                    var count = files.length;
-                                    for (var i in files) {
-                                        z++;
-                                        var f = files[i];
-                                        if (f) {
-                                            var nodeRef = new Alfresco.util.NodeRef(f.nodeRef)
-                                            Alfresco.util.Ajax.jsonRequest({
-                                                method: "POST",
-                                                url: Alfresco.constants.PROXY_URI + "api/node/" + nodeRef.uri + "/formprocessor",
-                                                dataObj: {
+            saveTags: function (that) {
+                return new Promise(function (resolve) {
+                    var files = that.fileStore;
+                    var tags = Dom.get(that.id + "-tags").value;
+                    if (!tags) {
+                        return resolve();
+                    } else {
+                        Alfresco.util.Ajax.jsonRequest(
+                            {
+                                method: "POST",
+                                url: Alfresco.constants.PROXY_URI + "api/tag/workspace/SpacesStore",
+                                dataObj: {
+                                    "name": tags
+                                },
+                                scope: this,
+                                successCallback: {
+                                    fn: function (response) {
+                                        var z = 0;
+                                        var x = 1;
+                                        for (var i in files) {
+                                            z++;
+                                            var f = files[i];
+                                            if (f) {
+                                                var nodeRef = new Alfresco.util.NodeRef(f.nodeRef)
+                                                Alfresco.util.Ajax.jsonRequest({
+                                                    method: "POST",
+                                                    url: Alfresco.constants.PROXY_URI + "api/node/" + nodeRef.uri + "/formprocessor",
+                                                    dataObj: {
 
-                                                    "prop_cm_taggable": response.json.nodeRef
-                                                },
-                                                successCallback: {
-                                                    fn: function (response) {
-                                                        Promise.resolve()
-                                                    }
-                                                },
-                                                scope: this
-                                            });
+                                                        "prop_cm_taggable": response.json.nodeRef
+                                                    },
+                                                    successCallback: {
+                                                        fn: function (response) {
+                                                            if (x++ == z) {
+                                                                resolve();
+                                                            }
+                                                        }
+                                                    },
+                                                    scope: this
+                                                });
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
-                }
+                            });
+                    }
+                });
+
             },
             onCancelOkButtonClick: function DNDUpload_onCancelOkButtonClick() {
                 Dom.addClass(this.compareVersionsSection, "hidden");
@@ -1479,48 +1484,49 @@
                     }
                     // CUSTOMIZE
                     // Create Tags
-                    this.saveTags();
-                    var that = this
-                    setTimeout(function () {
-                        if (!this.showConfig.suppressRefreshEvent) {
-                            if (fileName) {
-                                YAHOO.Bubbling.fire("metadataRefresh",
+                    var that = this;
+                    var promise = this.saveTags(that);
+                    promise.then(function (result) {
+                            if (!that.showConfig.suppressRefreshEvent) {
+                                if (fileName) {
+                                    YAHOO.Bubbling.fire("metadataRefresh",
+                                        {
+                                            currentPath: that.showConfig.path,
+                                            highlightFile: fileName
+                                        });
+                                }
+                                else {
+                                    YAHOO.Bubbling.fire("metadataRefresh",
+                                        {
+                                            currentPath: that.showConfig.path
+                                        });
+                                }
+
+                                // potentially new folders created under parent
+                                YAHOO.Bubbling.fire("folderCreated",
                                     {
-                                        currentPath: that.showConfig.path,
-                                        highlightFile: fileName
+                                        parentNodeRef: that.showConfig.parentNodeRef
                                     });
                             }
-                            else {
-                                YAHOO.Bubbling.fire("metadataRefresh",
+
+                            // Remove all files and references for this upload "session"
+                            that._clear();
+
+                            // Hide the panel
+                            that.panel.hide();
+
+                            // Disable the Esc key listener
+                            that.widgets.escapeListener.disable();
+
+                            // Inform the user if any files were uploaded before the rest was cancelled
+                            if (message) {
+                                Alfresco.util.PopupManager.displayPrompt(
                                     {
-                                        currentPath: that.showConfig.path
+                                        text: message
                                     });
                             }
-
-                            // potentially new folders created under parent
-                            YAHOO.Bubbling.fire("folderCreated",
-                                {
-                                    parentNodeRef: that.showConfig.parentNodeRef
-                                });
                         }
-
-                        // Remove all files and references for this upload "session"
-                        that._clear();
-
-                        // Hide the panel
-                        that.panel.hide();
-
-                        // Disable the Esc key listener
-                        that.widgets.escapeListener.disable();
-
-                        // Inform the user if any files were uploaded before the rest was cancelled
-                        if (message) {
-                            Alfresco.util.PopupManager.displayPrompt(
-                                {
-                                    text: message
-                                });
-                        }
-                    }, 3000)
+                    ).bind(this);
 
 
                 }
